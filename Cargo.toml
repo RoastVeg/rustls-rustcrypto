@@ -34,7 +34,7 @@ p521 = { version = "0.14.0-rc.15", default-features = false, features = ["pem", 
 paste = { version = "1", default-features = false }
 pkcs8 = { version = "0.11", default-features = false }
 pki-types = { package = "rustls-pki-types", version = "1", default-features = false }
-rsa = { version = "0.10.0-rc.18", default-features = false, features = ["sha2", "encoding"] }
+rsa = { version = "0.10.0-rc.18", default-features = false, features = ["sha2", "encoding"], optional = true }
 rustls = { version = "0.23", default-features = false }
 sec1 = { version = "0.8", default-features = false }
 sha2 = { version = "0.11", default-features = false }
@@ -47,6 +47,7 @@ x448 = { version = "0.14.0-pre.12", default-features = false }
 default = ["std", "tls12", "zeroize"]
 logging = ["rustls/logging"]
 tls12 = ["rustls/tls12"]
+rsa = ["dep:rsa"]
 
 # Only enable feature in upstream if there is an overall effect e.g. aead/alloc in-place
 # zeroize is another typical that can be turned off

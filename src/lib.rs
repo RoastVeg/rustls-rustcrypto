@@ -88,7 +88,7 @@ const TLS12_ECDSA_SCHEMES: [SignatureScheme; 5] = [
     SignatureScheme::ED448,
 ];
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 const TLS12_RSA_SCHEMES: [SignatureScheme; 6] = [
     SignatureScheme::RSA_PKCS1_SHA256,
     SignatureScheme::RSA_PKCS1_SHA384,
@@ -147,7 +147,7 @@ const TLS_ECDHE_ECDSA_SUITES: &[SupportedCipherSuite] = &[
     TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
 ];
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 pub const TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256: SupportedCipherSuite =
     SupportedCipherSuite::Tls12(&rustls::Tls12CipherSuite {
         common: CipherSuiteCommon {
@@ -161,7 +161,7 @@ pub const TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256: SupportedCipherSuite =
         prf_provider: &rustls::crypto::tls12::PrfUsingHmac(hmac::SHA256),
     });
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 pub const TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384: SupportedCipherSuite =
     SupportedCipherSuite::Tls12(&rustls::Tls12CipherSuite {
         common: CipherSuiteCommon {
@@ -175,7 +175,7 @@ pub const TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384: SupportedCipherSuite =
         aead_alg: &aead::gcm::Tls12Aes256Gcm,
     });
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 pub const TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: SupportedCipherSuite =
     SupportedCipherSuite::Tls12(&rustls::Tls12CipherSuite {
         common: CipherSuiteCommon {
@@ -189,19 +189,22 @@ pub const TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: SupportedCipherSuite =
         aead_alg: &aead::chacha20::Chacha20Poly1305,
     });
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 const TLS_ECDHE_RSA_SUITES: &[SupportedCipherSuite] = &[
     TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
     TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
     TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
 ];
 
-#[cfg(feature = "tls12")]
+#[cfg(all(feature = "tls12", feature = "rsa"))]
 const TLS12_SUITES: &[SupportedCipherSuite] = misc::const_concat_slices!(
     SupportedCipherSuite,
     TLS_ECDHE_ECDSA_SUITES,
     TLS_ECDHE_RSA_SUITES
 );
+
+#[cfg(all(feature = "tls12", not(feature = "rsa")))]
+const TLS12_SUITES: &[SupportedCipherSuite] = TLS_ECDHE_ECDSA_SUITES;
 
 #[cfg(not(feature = "tls12"))]
 const TLS12_SUITES: &[SupportedCipherSuite] = &[];

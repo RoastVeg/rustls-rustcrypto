@@ -4,6 +4,7 @@ use core::marker::PhantomData;
 
 use self::ecdsa::{EcdsaSigningKeyP256, EcdsaSigningKeyP384, EcdsaSigningKeyP521};
 use self::eddsa::{Ed25519SigningKey, Ed448SigningKey};
+#[cfg(feature = "rsa")]
 use self::rsa::RsaSigningKey;
 
 use getrandom::rand_core::UnwrapErr;
@@ -74,11 +75,22 @@ where
 /// # Errors
 ///
 /// Returns an error if the key couldn't be decoded.
+#[cfg(feature = "rsa")]
 pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, rustls::Error> {
     RsaSigningKey::try_from(der)
         .map(|x| Arc::new(x) as _)
         .or_else(|_| any_ecdsa_type(der))
         .or_else(|_| any_eddsa_type(der))
+}
+
+/// Extract any supported key from the given DER input.
+///
+/// # Errors
+///
+/// Returns an error if the key couldn't be decoded.
+#[cfg(not(feature = "rsa"))]
+pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, rustls::Error> {
+    any_ecdsa_type(der).or_else(|_| any_eddsa_type(der))
 }
 
 /// Extract any supported ECDSA key from the given DER input.
@@ -106,4 +118,5 @@ pub fn any_eddsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, ru
 
 pub mod ecdsa;
 pub mod eddsa;
+#[cfg(feature = "rsa")]
 pub mod rsa;
